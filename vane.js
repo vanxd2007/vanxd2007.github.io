@@ -178,3 +178,42 @@ function taskExists(text) {
     return false;
   }
 }
+function addBtnClickHandler() {
+  const subject = subjectInput.value.trim();
+  const task = taskInput.value.trim();
+
+  if (subject !== "" && task !== "") {
+    const fullText = `${subject}: ${task}`;
+
+    if (taskExists(fullText)) {
+      alert("La tarea ya existe.");
+      return;
+    }
+
+    const date = new Date().toLocaleDateString();
+    addTaskToDOM(fullText, date);
+    saveTaskToLocalStorage(fullText, date);
+
+    subjectInput.value = "";
+    taskInput.value = "";
+
+    // Mostrar la lista de tareas y ocultar el mensaje vacío
+    empty.style.display = "none"; // Cambia esto
+  }
+}
+
+function loadTasks() {
+  try {
+    let tasks = safeParseJSON(localStorage.getItem("tasks"));
+    tasks.forEach(task => addTaskToDOM(task.text, task.date));
+
+    // Mostrar u ocultar el mensaje vacío dependiendo de si hay tareas
+    if (tasks.length === 0) {
+      empty.style.display = "block"; // Cambia esto
+    } else {
+      empty.style.display = "none"; // Cambia esto
+    }
+  } catch (e) {
+    console.error("Error al cargar tareas:", e);
+  }
+}
